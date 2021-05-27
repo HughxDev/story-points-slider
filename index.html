@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Story Points Slider</title>
+  <style>
+    html, body {
+      padding: 0;
+      margin: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      text-align: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    body {
+      font-family: sans-serif;
+      font-size: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    [type="range"] {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Story Points Slider</h1>
+  <input id="slider" type="range" list="numbers" />
+  <datalist id="numbers">
+    <option>0</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>5</option>
+    <option>8</option>
+    <option>13</option>
+    <option>21</option>
+    <option>34</option>
+    <option>55</option>
+    <option>89</option>
+    <option>144</option>
+    <!-- <option>233</option>
+    <option>377</option>
+    <option>610</option>
+    <option>987</option>
+    <option>1,597</option>
+    <option>2,584</option>
+    <option>4,181</option>
+    <option>6,765</option>
+    <option>10,946</option>
+    <option>17,711</option>
+    <option>28,657</option>
+    <option>46,368</option>
+    <option>75,025</option>
+    <option>121,393</option>
+    <option>196,418</option> -->
+  </datalist>
+  <output id="output"></output>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const $slider = document.getElementById( 'slider' );
+      const $numbers = document.getElementById( 'numbers' );
+      const $output = document.getElementById( 'output' );
+      const numbers = [];
+      let lastValue = '0';
+      let lastIndex = 0;
+
+      Array.from( $numbers.children ).forEach( ( child ) => {
+        child.value = child.value.replace( /,/g, '' );
+
+        numbers.push( parseInt( child.value, 10 ) );
+      } );
+
+      $slider.min = numbers[lastIndex].toString();
+      $slider.max = numbers[numbers.length - 1].toString();
+      $slider.value = $slider.min;
+      lastValue = $slider.min;
+      $output.value = $numbers.querySelector( `[value="${$slider.min}"]` ).textContent;
+
+      function onChange( event ) {
+        const goal = parseInt( event.target.value, 10 );
+
+        if ( goal === lastValue ) {
+          return;
+        }
+
+        let closest;
+        let nextIndex;
+        let newIndex;
+
+        if ( numbers.indexOf( goal ) !== -1 ) {
+          closest = goal;
+          nextIndex = numbers.indexOf( goal );
+        } else if ( goal < lastValue ) {          
+          nextIndex = lastIndex - 1;
+          if ( nextIndex < 0 ) {
+            nextIndex = 0;
+          }
+
+          while ( nextIndex > 0 ) {
+            if ( goal < numbers[nextIndex] ) {
+              nextIndex = nextIndex - 1;
+            } else {
+              break;
+            }
+          }
+
+          closest = numbers[nextIndex];
+        } else if ( goal > lastValue ) {
+          nextIndex = lastIndex + 1;
+          if ( nextIndex > ( numbers.length - 1 ) ) {
+            nextIndex = numbers.length - 1;
+          }
+
+          while ( nextIndex <= ( numbers.length - 1 ) ) {
+            if ( goal > numbers[nextIndex] ) {
+              nextIndex = nextIndex + 1;
+            } else {
+              break;
+            }
+          }
+
+          closest = numbers[nextIndex];
+        } else {
+          throw new Error( 'Mathematically impossible; make sure you’re comparing Numbers' );
+        }
+
+        $slider.value = closest.toString();
+        $output.value = $numbers.querySelector( `[value="${closest}"]` ).textContent;
+        lastIndex = nextIndex;
+        lastValue = closest.toString();
+      };
+
+      $slider.addEventListener( 'change', onChange );
+    } );
+  </script>
+</body>
+</html>

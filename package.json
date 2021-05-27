@@ -1,0 +1,10 @@
+{
+  "name": "story-points-slider",
+  "version": "1.0.0",
+  "description": "Story Points Slider",
+  "main": "index.html",
+  "repository": "git@github.com:hguiney/story-points-slider.git",
+  "author": "Hugh Guiney",
+  "license": "CC0",
+  "private": false
+}
